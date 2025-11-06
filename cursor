@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+
+// Simple wrapper script for cursor-clone CLI
+// This allows users to run 'cursor' instead of 'cursor-ai'
+
+import { spawn } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Run the main CLI with all arguments passed through
+const cliPath = path.join(__dirname, 'cli.js');
+const child = spawn('node', [cliPath, ...process.argv.slice(2)], {
+  stdio: 'inherit',
+  cwd: process.cwd()
+});
+
+child.on('close', (code) => {
+  process.exit(code);
+});
+
+child.on('error', (error) => {
+  console.error('Error running cursor CLI:', error);
+  process.exit(1);
+});
